@@ -15,16 +15,14 @@ Test Booster basics:
 
 Test Boosters:
 
-  - [RSpec Booster](#rspec-booster)
-  - [Cucumber Booster](#cucumber-booster)
   - [Minitest Booster](#minitest-booster)
-  - [ExUnit Booster](#ex-unit-booster)
-  - [GoTest Booster](#go-test-booster)
 
 ## Installation
 
-``` bash
-gem install semaphore_test_boosters
+```ruby
+group :development, :test do
+  gem 'semaphore_test_boosters', github: 'webit-de/test-boosters'
+end
 ````
 
 ## What are Test Boosters
@@ -103,55 +101,6 @@ rspec_booster --job 1/3
 
 Booster will distribute your leftover files uniformly across jobs.
 
-## RSpec Booster
-
-The `rspec_booster` loads all the files that match the `spec/**/*_spec.rb`
-pattern and uses the `~/rspec_split_configuration.json` file to parallelize your
-test suite.
-
-Example of running job 4 out of 32 jobs:
-
-``` bash
-rspec_booster --job 4/32
-```
-
-Under the hood, the RSpec Booster uses the following command:
-
-``` bash
-bundle exec rspec --format documentation --format json --out /home/<user>/rspec_report.json <file_list>
-```
-
-Optionally, you can pass additional RSpec flags with the `TB_RSPEC_OPTIONS`
-environment variable. You can also set a RSpec formatter with the `TB_RSPEC_FORMATTER` environment variable.
-Default formatter is `documentation`.
-
-
-Example:
-``` bash
-TB_RSPEC_OPTIONS='--fail-fast=3' TB_RSPEC_FORMATTER=Fivemat rspec_booster --job 4/32
-
-# will execute:
-bundle exec rspec --fail-fast=3 --format Fivemat --format json --out /home/<user>/rspec_report.json <file_list>
-```
-
-## Cucumber Booster
-
-The `cucumber_booster` loads all the files that match the `features/**/*.feature`
-pattern and uses the `~/cucumber_split_configuration.json` file to parallelize
-your test suite.
-
-Example of running job 4 out of 32 jobs:
-
-``` bash
-cucumber_booster --job 4/32
-```
-
-Under the hood, the Cucumber Booster uses the following command:
-
-``` bash
-bundle exec cucumber <file_list>
-```
-
 ## Minitest Booster
 
 The `minitest_booster` loads all the files that match the `test/**/*_test.rb`
@@ -162,6 +111,22 @@ Example of running job 4 out of 32 jobs:
 
 ``` bash
 minitest_booster --job 4/32
+```
+
+by default, for each execution a new order is chosen. You have to pass a seed to execute all of your tests correctly:
+
+```bash
+TEST_BOOSTER_SEED=123456789 minitest_booster --job 1/32
+TEST_BOOSTER_SEED=123456789 minitest_booster --job 2/32
+TEST_BOOSTER_SEED=123456789 minitest_booster --job 3/32
+```
+
+This seed will be passed to `Random.new` to provide the basis for the random generator.
+
+If you want to eecute more than the default test files, you can pass then with `TEST_BOOSTER_FILES` (devided by space):
+
+```bash
+TEST_BOOSTER_FILES="test/**/*_test.rb vendor/gems/my_custom_gem/test/**/*_test.rb" minitest_booster --job 1/32
 ```
 
 If minitest booster is executed in a scope of a Rails project, the following is
@@ -186,54 +151,6 @@ export MINITEST_BOOSTER_COMMAND="bundle exec rake test"
 
 minitest_booster --job 1/42
 ```
-
-## ExUnit Booster
-
-The `ex_unit_booster` loads all the files that match the `test/**/*_test.exs`
-pattern and uses the `~/ex_unit_split_configuration.json` file to parallelize
-your test suite.
-
-Example of running job 4 out of 32 jobs:
-
-``` bash
-ex_unit_booster --job 4/32
-```
-
-Under the hood, the ExUnit Booster uses the following command:
-
-``` bash
-mix test <file_list>
-```
-
-## Go Test Booster
-
-The `go_test_booster` loads all the files that match the `**/*_test.go`
-pattern and uses the `~/go_test_split_configuration.json` file to parallelize
-your test suite.
-
-Example of running job 4 out of 32 jobs:
-
-``` bash
-go_test_booster --job 4/32
-```
-
-Under the hood, the Go Test Booster uses the following command:
-
-``` bash
-go test <file_list>
-```
-
-## Development
-
-### Integration testing
-
-For integration tests we use test repositories that are located in
-<https://github.com/renderedtext/test-boosters-tests.git>.
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at
-https://github.com/renderedtext/test-boosters.
 
 ## License
 
