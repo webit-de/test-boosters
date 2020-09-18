@@ -22,15 +22,11 @@ module TestBoosters
         jobs = Array.new(job_count) { [] }
 
         # distribute files in Round Robin fashion
-        sorted_files_by_file_size.each.with_index do |file, index|
+        existing_files.each.with_index do |file, index|
           jobs[index % job_count] << file
         end
 
         jobs
-      end
-
-      def sorted_files_by_file_size
-        @sorted_files_by_file_size ||= existing_files.sort_by { |file| -File.size(file) }
       end
 
       def existing_files

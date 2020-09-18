@@ -26,7 +26,7 @@ module TestBoosters
       end
 
       def all_files
-        @all_files ||= Dir[@file_pattern].sort
+        @all_files ||= Dir.glob(@file_pattern).sort.shuffle(random: seeded_random)
       end
 
       private
@@ -37,6 +37,12 @@ module TestBoosters
 
       def split_configuration
         @split_configuration ||= TestBoosters::Files::SplitConfiguration.new(@split_configuration_path)
+      end
+
+      def seeded_random
+        seed = ENV['TEST_BOOSTER_SEED'] || Random.new_seed
+        puts "using seed #{seed}"
+        Random.new(seed.to_i)
       end
 
     end
