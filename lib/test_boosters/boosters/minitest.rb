@@ -1,11 +1,8 @@
 module TestBoosters
   module Boosters
     class Minitest < Base
-
-      FILE_PATTERN = "test/**/*_test.rb".freeze
-
       def initialize
-        super(FILE_PATTERN, split_configuration_path, command)
+        super(file_patterns, split_configuration_path, command)
       end
 
       def command
@@ -36,6 +33,13 @@ module TestBoosters
         File.exist?("app") && File.exist?("config") && File.exist?("config/application.rb")
       end
 
+      def file_patterns
+        if ENV['TEST_BOOSTER_FILES']
+          ENV['TEST_BOOSTER_FILES'].split(' ')
+        else
+          ["test/**/*_test.rb"]
+        end
+      end
     end
   end
 end

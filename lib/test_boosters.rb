@@ -8,7 +8,6 @@ module TestBoosters
   require "test_boosters/cli_parser"
   require "test_boosters/logger"
   require "test_boosters/shell"
-  require "test_boosters/insights_uploader"
   require "test_boosters/project_info"
   require "test_boosters/job"
 
